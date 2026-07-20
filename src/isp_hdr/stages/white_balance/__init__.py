@@ -1,0 +1,3 @@
+"""
+White balance correction.
+"""
