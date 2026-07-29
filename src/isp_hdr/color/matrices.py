@@ -41,7 +41,14 @@ M_Rec2020_to_XYZ = np.array(
 )
 
 # CIE XYZ (D65) -> Rec.2020
-M_XYZ_to_Rec20202 = np.linalg.inv(M_Rec2020_to_XYZ)
+M_XYZ_to_Rec2020 = np.linalg.inv(M_Rec2020_to_XYZ)
+
+# DJI D-Gamut -> ACES AP1
+M_DG_to_AP1 = np.array([
+    [0.7201, 0.2268, 0.0531],
+    [0.0152, 0.9634, 0.0214],
+    [0.0003, 0.0460, 0.9537],
+])
 
 # Rec2020 luma weights
 REC2020_LUMA = np.array([0.2627, 0.6780, 0.0593])

@@ -6,7 +6,7 @@ import numpy as np
 from .color.matrices import DJI_EXTRA_EV
 
 @dataclass
-class CameraMetaData:
+class CameraMetadata:
     """Everything pipeline needs to know about the captured frame"""
     dng_path: str
 
@@ -44,16 +44,12 @@ class CameraMetaData:
             self.white_level[b] - self.black_level[b],
         ], dtype=np.float32)
 
+
 @dataclass
 class ISPContext:
     """Mutable per run context"""
-    meta: CameraMetaData
-
-    backend: str = "numpy"
+    meta: CameraMetadata
 
     # Handed forward between stages
     wb_gains: np.ndarray | None = None
     xyz_lifted: np.ndarray | None = None
-
-    # For anything else
-    extra: dict = field(default_factory=dict)
