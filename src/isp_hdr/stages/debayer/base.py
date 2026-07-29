@@ -20,5 +20,4 @@ class BaseDebayer(Stage):
 
     def process(self, bayer: np.ndarray, ctx: ISPContext) -> np.ndarray:
         rgb_raw = self._demosaic(bayer)
-        norm_scale = ops.asarray_like(ctx.meta.norm_scale, rgb_raw)
-        return rgb_raw / norm_scale[None, None, :]
+        return rgb_raw / ctx.meta.norm_scale[None, None, :]

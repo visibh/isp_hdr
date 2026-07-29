@@ -17,7 +17,7 @@ class WhiteBalance(Stage):
         cfa, color_desc = m.cfa_pattern, m.color_desc
 
         g_cfa_idx = color_desc.index('G')
-        wb_gains = m.camera_whitebalance / m.camera_whitebalance[g_cfa_idx]
+        wb_gains = m.camera_whitebalance / [g_cfa_idx]
 
         for r in range(2):
             for c in range(2):
