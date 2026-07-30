@@ -18,5 +18,4 @@ def separable_gaussian(plane: np.ndarray, sigma: float) -> np.ndarray:
     """
     2D Gaussian blur via two separable 1D conv pass
     """
-    return np.zeros(1)
-    pass
+    raise NotImplementedError("separable_gaussian function is not implemented yet")

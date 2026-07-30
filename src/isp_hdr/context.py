@@ -1,7 +1,7 @@
 """
 Pipeline context containing per-frame metadata and derived parameters that stages need beyond the image array itself
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import numpy as np
 from .color.matrices import DJI_EXTRA_EV
 
