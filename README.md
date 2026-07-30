@@ -2,7 +2,7 @@ This repo illustrates a plausible ISP pipeline consisting of several algorithms.
 
 ## Prerequisites
 - Python ≥ 3.14
-- **exiftool** — required external binary for DNG metadata + OpcodeList3 parsing:
+- **exiftool** — It is a required external binary for DNG metadata + OpcodeList3 parsing:
   On Mac: `brew install exiftool`
 
 ## Image Data
