@@ -18,7 +18,7 @@ defaults:
 input_dng: ???
 
 # Output Ultra HDR JPEG path.
-output: DJI_X9_UltraHDR_HD.jpg
+output: DJI_X9_UltraHDR.jpg
 
 # Ultra HDR encoder settings.
 encoder:

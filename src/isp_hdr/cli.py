@@ -20,8 +20,7 @@ Usage:
 
 Examples:
   isp-hdr input_dng=frames/379.DNG
-  isp-hdr input_dng=in.DNG debayer=bilinear tonemap=local rescale=none
-  isp-hdr input_dng=in.DNG output=out.jpg save_logc4=true
+  isp-hdr input_dng=in.DNG debayer=bilinear tonemap=power rescale=none
 
 """
 

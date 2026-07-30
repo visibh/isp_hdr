@@ -1,0 +1,2 @@
+_target_: isp_hdr.stages.tonemap.AcesToneMap
+perceptual_ev: 0.47

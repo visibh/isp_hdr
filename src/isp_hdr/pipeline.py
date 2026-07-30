@@ -2,9 +2,6 @@
 ISP pipeline.
 Some of the stages are mandatory and hence are instantiated directly.
 """
-
-import os
-
 import numpy as np
 from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
@@ -27,7 +24,7 @@ def _build(node) -> Stage | None:
         return None
     return instantiate(node)
 
-def _run(stages: list[Stage | None], image, ctx: ISPContext, debug: bool):
+def _run(stages: list[Stage | None], image, ctx: ISPContext):
     for st in stages:
         if st is None:
             continue
@@ -46,15 +43,12 @@ def render(cfg: DictConfig) -> np.ndarray:
     print("Stage group: ISP decode (sensor -> camera RGB)")
     image = _run([
         Linearize(),
-        _build(cfg.get("highlight_recovery")),
-        _build(cfg.get("green_equalize")),
         WhiteBalance(),
-        _build(cfg.get("denoise_bayer")),
         _build(cfg.get("debayer")),
         _build(cfg.get("denoise_chroma")),
         _build(cfg.get("optical")),
         CCM(),
-    ], bayer, ctx, cfg.debug_saves)
+    ], bayer, ctx)
 
     # Scene-referred side-outputs. Tapped at the D-Gamut stage
     if cfg.save_exr:
@@ -67,7 +61,7 @@ def render(cfg: DictConfig) -> np.ndarray:
         _build(cfg.get("tonemap")),
         _build(cfg.get("rescale")),
         _build(cfg.get("sharpen")),
-    ], image, ctx, cfg.debug_saves)
+    ], image, ctx)
 
     return image
 

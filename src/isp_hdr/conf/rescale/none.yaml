@@ -1,2 +1,3 @@
-# Disable rescaling
+# @package _global_
+# Disable rescaling -> full-resolution 8K output.
 rescale: null
