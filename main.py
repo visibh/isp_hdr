@@ -15,7 +15,7 @@ def main():
 
     ctx = ISPContext(meta=meta)
     img = bayer
-    for st in [Linearize(), BilinearDebayer(), CCM()]:
+    for st in [Linearize(), WhiteBalance(), BilinearDebayer(), CCM()]:
         img = st.process(img, ctx)
     print(img.shape, ctx.xyz_lifted is not None, float(img.min()), round(float(img.max()), 1))
 

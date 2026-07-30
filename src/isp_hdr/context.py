@@ -33,16 +33,8 @@ class CameraMetadata:
 
     @property
     def cam_to_xyz(self) -> np.ndarray:
-        """Camera RGB to scene-linear"""
-        r = self.color_desc.index('R')
-        g = self.color_desc.index('G')
-        b = self.color_desc.index('B')
-
-        return np.array([
-            self.white_level[r] - self.black_level[r],
-            self.white_level[g] - self.black_level[g],
-            self.white_level[b] - self.black_level[b],
-        ], dtype=np.float32)
+        """Camera RGB to CIE XYZ"""
+        return np.linalg.inv(self.color_matrix2) @ np.diag(self.as_shot_neutral)
 
     @property
     def norm_scale(self) -> np.ndarray:

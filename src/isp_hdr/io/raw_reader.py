@@ -28,12 +28,10 @@ def read_raw(dng_path: str) -> RawCapture:
     """
     with rawpy.imread(dng_path) as raw:
         return RawCapture(
-                bayer=raw.raw_image_visible.astype(np.float32),
-                black_level=np.array(raw.black_level_per_channel, dtype=np.float32),
-                cfa_pattern=raw.raw_pattern,
-                color_desc=raw.color_desc.decode(),
-                camera_whitebalance=np.array(
-                    raw.camera_white_level_per_channel, dtype=np.float64
-                ),
-                white_level_fallback=float(raw.white_level),
-            )
+            bayer=raw.raw_image_visible.astype(np.float32),
+            black_level=np.array(raw.black_level_per_channel, dtype=np.float32),
+            cfa_pattern=raw.raw_pattern,
+            color_desc=raw.color_desc.decode(),
+            camera_whitebalance=np.array(raw.camera_whitebalance, dtype=np.float64),
+            white_level_fallback=float(raw.white_level),
+        )

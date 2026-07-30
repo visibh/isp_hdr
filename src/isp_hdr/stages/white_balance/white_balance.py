@@ -17,7 +17,14 @@ class WhiteBalance(Stage):
         cfa, color_desc = m.cfa_pattern, m.color_desc
 
         g_cfa_idx = color_desc.index('G')
-        wb_gains = m.camera_whitebalance / [g_cfa_idx]
+
+        wb_gains = m.camera_whitebalance / m.camera_whitebalance[g_cfa_idx]
+
+        # Guard against non-positive gains -> replace with same color siblings
+        # Because DJI report camera_whitebalance[3] i.e. Gb as 0.0
+        for i in range(4):
+            if wb_gains[i] <= 0.0:
+                wb_gains[i] = wb_gains[color_desc.index(color_desc[i])]
 
         for r in range(2):
             for c in range(2):

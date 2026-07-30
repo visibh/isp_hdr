@@ -3,11 +3,11 @@ Debayer slot base class
 """
 import abc
 import numpy as np
-from numpy.core.numeric import ndarray
+
 from ..base import Stage
 
 from ...context import ISPContext
-from ... import ops
+
 
 class BaseDebayer(Stage):
     name = "debayer"
