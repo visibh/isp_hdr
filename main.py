@@ -8,9 +8,17 @@ def main():
     from isp_hdr.stages.linearize import Linearize
     from isp_hdr.stages.white_balance import WhiteBalance
     from isp_hdr.stages.debayer.bilinear import BilinearDebayer
+    from isp_hdr.stages.ccm import CCM
 
     DNG = "frames/379.DNG"
     bayer, meta = load_dng(DNG)
+
+    ctx = ISPContext(meta=meta)
+    img = bayer
+    for st in [Linearize(), BilinearDebayer(), CCM()]:
+        img = st.process(img, ctx)
+    print(img.shape, ctx.xyz_lifted is not None, float(img.min()), round(float(img.max()), 1))
+
 
     print("Shape:", bayer.shape, "dtype:", bayer.dtype)
 
