@@ -36,9 +36,11 @@ The tone curve is deliberately minimal i.e. it is a chrominance-preserving power
 
 ## Example Runs
 1. Render HDR JPEG in 16:9 format. So it crops the frame: 8192x4320 -> 7680x4320 
+
 `uv run isp-hdr input_dng=frames/379.DNG`
 
 2. Render HDR JPEG without 16:9 crop and selecting bilinear interpolation in place of MHC for debayering
+
 `uv run isp-hdr input_dng=frames/379.DNG debayer=bilinear tonemap=power rescale=none`
 
 ### Output
