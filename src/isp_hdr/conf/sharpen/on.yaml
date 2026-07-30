@@ -1,0 +1,4 @@
+_target_: isp_hdr.stages.sharpen.PerceptualSharpen
+sigma: 1.0
+amount: 0.4
+noise_threshold: 0.015

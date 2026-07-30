@@ -1,0 +1,3 @@
+_target_: isp_hdr.stages.rescale.Rescale
+dst_h: 1080
+dst_w: 1920

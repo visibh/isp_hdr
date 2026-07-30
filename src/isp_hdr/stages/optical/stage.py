@@ -13,7 +13,7 @@ from .warp import apply_warp_rectilinear
 
 
 class OpticalCorrection(Stage):
-    name = "optical corrections"
+    name = "optical"
 
     def process(self, cam_rgb: np.ndarray, ctx: ISPContext) -> np.ndarray:
         for op in parse_opcode_list3(ctx.meta.dng_path):

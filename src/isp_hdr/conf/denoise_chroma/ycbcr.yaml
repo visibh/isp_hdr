@@ -1,0 +1,2 @@
+_target_: isp_hdr.stages.denoise_chroma.ChromaDenoise
+sigma_chroma: 1.5

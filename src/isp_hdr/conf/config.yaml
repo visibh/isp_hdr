@@ -1,0 +1,29 @@
+# End-t-end ISP render config
+# Each entry below picks one option from a stage group. Not available to all stages
+# Override any of them on the CLI, e.g.:
+# isp-hdr input_dng=frames/379.DNG debayer=bilinear tonemap=local
+defaults:
+  # NOTE that "on"/"off" are quoted in YAML
+  # CLI overrides need no quotes e.g. sharpen=off
+  - debayer: malvar # options: malvar | bilinear
+  - denoise_chroma: ycbcr # options: ycbcr | off
+  - optical: "on" # options: on | off
+  - tonemap: power # I will add more later
+  - rescale: hd_1080p # options: hd_1080p (for HD HDR export) or none (full 8K)
+  - sharpen: "on" # options: on | off
+  - _self_
+
+# Input DNG (must).
+# Pass on the CLI: input_dng=frames/379.DNG
+input_dng: ???
+
+# Output Ultra HDR JPEG path.
+output: DJI_X9_UltraHDR_HD.jpg
+
+# Ultra HDR encoder settings.
+encoder:
+  nits: 1600 # HDR peak luminance. 1600 for Macbook Pro Retina XDR displays
+  level: 95 # JPEG quality (0-100)
+
+# Optional scene-referred side-outputs. These are tapped at the D-Gamut/XYZ pivot.
+save_exr: false # D-Gamut linear + ACEScg EXR

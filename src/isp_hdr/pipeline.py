@@ -3,42 +3,77 @@ ISP pipeline.
 Some of the stages are mandatory and hence are instantiated directly.
 """
 
-import sys
+import os
+
 import numpy as np
+from hydra.utils import instantiate
+from omegaconf import DictConfig, OmegaConf
 
 from .context import ISPContext
 from .io import load_dng
-from .io.writers import write_ultrahdr
+from .io.writers import write_linear_exrs, write_ultrahdr
+from .stages.base import Stage
+from .stages.ccm import CCM
 from .stages.linearize import Linearize
 from .stages.white_balance import WhiteBalance
-from .stages.debayer.malvar import MalvarDebayer # Possible options: BilinearDebayer, MalvarDebayer
-from .stages.ccm import CCM
-from .stages.tonemap.power import PowerToneMap
-from .stages.denoise_chroma import ChromaDenoise
-from .stages.optical import OpticalCorrection
-from .stages.rescale import Rescale
-from .stages.sharpen import PerceptualSharpen
 
+def _build(node) -> Stage | None:
+    """
+    Instantiate an swappable stage from its config node. None if disabled
+    """
+    if node is None:
+        return None
+    if OmegaConf.select(node, "_target_") is None:
+        return None
+    return instantiate(node)
 
-def render(dng_path: str) -> np.ndarray:
-    print(f"Loading DNG: {dng_path}")
-    bayer, meta = load_dng(dng_path)
+def _run(stages: list[Stage | None], image, ctx: ISPContext, debug: bool):
+    for st in stages:
+        if st is None:
+            continue
+        image = st.process(image, ctx)
+    return image
+
+def render(cfg: DictConfig) -> np.ndarray:
+    """
+    Run the full ISP and return the display-referred Rec.2020 image
+    """
+    print(f"Loading DNG: {cfg.input_dng}")
+    bayer, meta = load_dng(cfg.input_dng)
     ctx = ISPContext(meta=meta)
 
-    image = bayer
-    for stage in [Linearize(), WhiteBalance(), MalvarDebayer(), ChromaDenoise(), OpticalCorrection(), CCM(), PowerToneMap(),Rescale(), PerceptualSharpen(),]:
-        print(f"Running stage: {stage.name}")
-        image = stage.process(image, ctx)
+    # Sensor + camera RGB domain
+    print("Stage group: ISP decode (sensor -> camera RGB)")
+    image = _run([
+        Linearize(),
+        _build(cfg.get("highlight_recovery")),
+        _build(cfg.get("green_equalize")),
+        WhiteBalance(),
+        _build(cfg.get("denoise_bayer")),
+        _build(cfg.get("debayer")),
+        _build(cfg.get("denoise_chroma")),
+        _build(cfg.get("optical")),
+        CCM(),
+    ], bayer, ctx, cfg.debug_saves)
+
+    # Scene-referred side-outputs. Tapped at the D-Gamut stage
+    if cfg.save_exr:
+        print("Side-output: D-Gamut linear + ACEScg EXR")
+        write_linear_exrs(image)
+
+    # Display domain. Rec.2020
+    print("Stage group: tone map -> rescale -> sharpen. Display Rec.2020")
+    image = _run([
+        _build(cfg.get("tonemap")),
+        _build(cfg.get("rescale")),
+        _build(cfg.get("sharpen")),
+    ], image, ctx, cfg.debug_saves)
 
     return image
 
-
-def run_pipeline(dng_path: str, output: str = "debug_dump.jpg") -> None:
-    image = render(dng_path)
-
-    write_ultrahdr(image, output)
-
-
-if __name__ == "__main__":
-    dng = sys.argv[1] if len(sys.argv) > 1 else "frames/379.DNG"
-    run_pipeline(dng)
+def run_pipeline(cfg: DictConfig) -> None:
+    """
+    Render and encode the terminal Ultra HDR JPEG
+    """
+    image = render(cfg)
+    write_ultrahdr(image, cfg.output, nits=cfg.encoder.nits, level=cfg.encoder.level)
