@@ -11,9 +11,13 @@ from .io import load_dng
 from .io.writers import write_ultrahdr
 from .stages.linearize import Linearize
 from .stages.white_balance import WhiteBalance
-from .stages.debayer.bilinear import BilinearDebayer
+from .stages.debayer.malvar import MalvarDebayer # Possible options: BilinearDebayer, MalvarDebayer
 from .stages.ccm import CCM
 from .stages.tonemap.power import PowerToneMap
+from .stages.denoise_chroma import ChromaDenoise
+from .stages.optical import OpticalCorrection
+from .stages.rescale import Rescale
+from .stages.sharpen import PerceptualSharpen
 
 
 def render(dng_path: str) -> np.ndarray:
@@ -22,7 +26,7 @@ def render(dng_path: str) -> np.ndarray:
     ctx = ISPContext(meta=meta)
 
     image = bayer
-    for stage in [Linearize(), WhiteBalance(), BilinearDebayer(), CCM(), PowerToneMap()]:
+    for stage in [Linearize(), WhiteBalance(), MalvarDebayer(), ChromaDenoise(), OpticalCorrection(), CCM(), PowerToneMap(),Rescale(), PerceptualSharpen(),]:
         print(f"Running stage: {stage.name}")
         image = stage.process(image, ctx)
 
